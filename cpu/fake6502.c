@@ -328,6 +328,7 @@ void step6502()
       printf("\n");
     #endif
   }
+
 }
 
 void exec6502(uint32_t tickcount)

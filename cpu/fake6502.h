@@ -59,4 +59,5 @@ static const char *opnametable_c02[256]= {
 /* F */      "beq",  "sbc",  "sbc",  "nop",  "nop",  "sbc",  "inc", "smb7",  "sed",  "sbc",  "plx",  "nop",  "nop",  "sbc",  "inc", "bbs7"  /* F */
 };
 
+
 #endif

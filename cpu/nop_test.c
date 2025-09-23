@@ -4,7 +4,13 @@
     BSD 2-Clause License
 */
 
-/* NOP TESTER - your 1st breadboard test */
+/* NOP TESTER - your 1st breadboard test 
+ *
+ * modified to have a real stack in memory
+ * modified to enable interrupts 
+ * modified to inject an interrupt everu 200 cycles
+ *
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,20 +21,41 @@
 
 #include "fake6502.h"
 
+// the stack
+uint8_t stack[255];
+
 uint8_t read6502(uint16_t address, uint8_t bank)
 {
-  if (address == 0xEAEA)
+  // Manual reset vector
+  if (address == 0xFFFC)
+    return 0x00; 
+  if (address == 0xFFFD)
+    return 0x02;
+  
+  // Manual stack read
+  if (address >= 0x100 & address < 0x200)
+    return stack[address-0x100];
+
+  if (address == 0x0200)
     return 0x58; //Clear interrupt disable flag
 
-  if (address == 0xEB00)
-    return 0x00; //insert a break
-  
+  if (address == 0xEAF0)
+    return 0x40; //RTI
 
+  // Insert break test
+  if (address == 0x210) {
+    return 0x00; //insert a break
+  }
+  
   return 0xEA;
 }
 
 void write6502(uint16_t address, uint8_t bank, uint8_t data)
 {
+  // Manual stack write
+  if (address >= 0x100 & address < 0x200)
+    stack[address-0x100] = data;
+
   return;
 }
 
