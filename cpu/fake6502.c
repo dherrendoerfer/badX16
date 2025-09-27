@@ -7,15 +7,19 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/mman.h>
 #include <time.h>
 #include <unistd.h>
 
 #include "fake6502.h"
 
-// PI3 and Zero defs
-#define BCM2708_PERI_BASE        0x3F000000
-#define GPIO_BASE                (BCM2708_PERI_BASE + 0x200000) /* GPIO controller */
+// MMIO base (detected)
+uint32_t mmio_peri_base;
+uint8_t pi_caps;
+
+#define GPIO_BASE                (mmio_peri_base + 0x200000) /* GPIO controller */
+#define ST_BASE                  (mmio_peri_base + 0x003000) /* Timer */
 
 // GPIO setup macros. Always use INP_GPIO(x) before using OUT_GPIO(x) or SET_GPIO_ALT(x,y)
 #define INP_GPIO(g) *(gpio+((g)/10)) &= ~(7<<(((g)%10)*3))
@@ -64,6 +68,43 @@ uint8_t proc_init_done = 0;
 uint32_t clockticks6502; //increases on transition from low to high
 
 // HELPERS 
+void detectPi()
+{
+  int num;
+  int id_fd = 0;
+  char id_str[256];
+  bzero((void*)id_str,256);
+
+  if ((id_fd=open("/sys/firmware/devicetree/base/model",O_RDONLY)) < 0) {
+    printf("can't open /sys/firmware/devicetree/base/model\n");
+    exit(1);
+  }
+
+  if ((num=read(id_fd, id_str, sizeof(id_str))) < 0) {
+    printf("can't read /sys/firmware/devicetree/base/model\n");
+    exit(1);
+  }
+
+  close(id_fd);
+
+  if (strncmp(id_str, "Raspberry Pi Zero 2", 19) == 0) { 
+      mmio_peri_base = 0x3F000000;
+      pi_caps = 2;
+  } else if (strncmp(id_str, "Raspberry Pi 4 Model B", 22) == 0) { 
+      mmio_peri_base = 0xFE000000; 
+      pi_caps = 4;
+  } else if (strncmp(id_str, "Raspberry Pi 3 Model B Plus", 27) == 0) { 
+      mmio_peri_base = 0x3F000000; 
+      pi_caps = 3;
+  } else { 
+      //default
+      mmio_peri_base = 0x3F000000;
+      pi_caps = 3;
+      printf("Pi model not known please update cpu.c with the output of\n  cat /sys/firmware/devicetree/base/model");
+      printf(". Defaulting to Pi3");
+  } 
+}
+
 //
 // Set up a memory regions to access GPIO
 //
@@ -105,6 +146,9 @@ void init6502()
 #ifdef DEBUG
   printf("Init65C05\n");
 #endif
+
+  // Detect the version of Pi we're on
+  detectPi();
 
   // Set up gpio pointer for direct register access
   setup_io();

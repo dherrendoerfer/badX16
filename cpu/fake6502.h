@@ -39,6 +39,7 @@ static const uint32_t ticktable_65c02[256] = {
 /* F */       2,    5,    5,    1,    4,    4,    6,    5,    2,    4,    4,    1,    4,    4,    7,    5  /* F */
 };
 
+#ifdef STEPDEBUG
 static const char *opnametable_c02[256]= {
 /*        |  0    |  1    |  2    |  3    |  4    |  5    |  6    |  7    |  8    |  9    |  A    |  B    |  C    |  D    |  E    |  F  |     */
 /* 0 */      "brk",  "ora",  "nop",  "nop",  "tsb",  "ora",  "asl", "rmb0",  "php",  "ora",  "asl",  "nop",  "tsb",  "ora",  "asl", "bbr0", /* 0 */
@@ -58,6 +59,6 @@ static const char *opnametable_c02[256]= {
 /* E */      "cpx",  "sbc",  "nop",  "nop",  "cpx",  "sbc",  "inc", "smb6",  "inx",  "sbc",  "nop",  "nop",  "cpx",  "sbc",  "inc", "bbs6", /* E */
 /* F */      "beq",  "sbc",  "sbc",  "nop",  "nop",  "sbc",  "inc", "smb7",  "sed",  "sbc",  "plx",  "nop",  "nop",  "sbc",  "inc", "bbs7"  /* F */
 };
-
+#endif /*stepdebug*/
 
 #endif
