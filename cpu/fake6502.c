@@ -313,7 +313,7 @@ void tick6502()
   #endif
 
   #ifdef TICKDEBUG
-    printf("ADDR: %04X, DATA: %02X, /RW: %01X\n",bus_addr, data, bus_rw>>24);
+    printf("ADDR: %04X, DATA: %02X, /RW: %01X\r\n",bus_addr, data, bus_rw>>24);
   #endif
 
 //  ndelay20;
@@ -323,11 +323,11 @@ void tick6502()
 void logVector()
 {
   if (bus_addr==0xfffa)
-    printf("**NMI VECTOR --> **\n");
+    printf("**NMI VECTOR --> **\r\n");
   if (bus_addr==0xfffc)
-    printf("**RESET VECTOR --> **\n");
+    printf("**RESET VECTOR --> **\r\n");
   if (bus_addr==0xfffe)
-    printf("**INT VECTOR --> **\n");
+    printf("**INT VECTOR --> **\r\n");
 }
 #endif
 
@@ -350,7 +350,7 @@ void step6502()
 
   ticks=ticktable_65c02[data];
   #ifdef STEPDEBUG
-    printf("%04X:   %s\n",bus_addr, opnametable_c02[data]);
+    printf("%04X:%02X                    %s\r\n",bus_addr, data, opnametable_c02[data]);
   #endif
 
   while (--ticks) {
@@ -369,7 +369,7 @@ void step6502()
         printf("(r)");
       else
         printf("(w)");
-      printf("\n");
+      printf("\r\n");
     #endif
   }
 
