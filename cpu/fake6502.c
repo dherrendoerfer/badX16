@@ -76,12 +76,12 @@ void detectPi()
   bzero((void*)id_str,256);
 
   if ((id_fd=open("/sys/firmware/devicetree/base/model",O_RDONLY)) < 0) {
-    printf("can't open /sys/firmware/devicetree/base/model\n");
+    printf("can't open /sys/firmware/devicetree/base/model\r\n");
     exit(1);
   }
 
   if ((num=read(id_fd, id_str, sizeof(id_str))) < 0) {
-    printf("can't read /sys/firmware/devicetree/base/model\n");
+    printf("can't read /sys/firmware/devicetree/base/model\r\n");
     exit(1);
   }
 
@@ -100,8 +100,8 @@ void detectPi()
       //default
       mmio_peri_base = 0x3F000000;
       pi_caps = 3;
-      printf("Pi model not known please update cpu.c with the output of\n  cat /sys/firmware/devicetree/base/model");
-      printf(". Defaulting to Pi3");
+      printf("Pi model not known please update cpu.c with the output of\n  cat /sys/firmware/devicetree/base/model\r\n");
+      printf(". Defaulting to Pi3\r\n");
   } 
 }
 
@@ -112,7 +112,7 @@ void setup_io()
 {
    /* open /dev/mem */
    if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) {
-      printf("can't open /dev/mem \n");
+      printf("can't open /dev/mem\r\n");
       exit(-1);
    }
 
@@ -144,7 +144,7 @@ void init6502()
 {
   int g;
 #ifdef DEBUG
-  printf("Init65C05\n");
+  printf("Init65C05\r\n");
 #endif
 
   // Detect the version of Pi we're on
@@ -200,7 +200,7 @@ void one_clock()
 void reset6502(uint8_t c816)
 {
   if (c816) {
-    printf("816 not supported\n");
+    printf("816 not supported\r\n");
     exit(1);
   }
 
@@ -208,7 +208,7 @@ void reset6502(uint8_t c816)
     init6502();
 
 #ifdef DEBUG
-  printf("Reset6502");
+  printf("Reset6502\r\n");
 #endif
 
   // Perform 6502 reset
@@ -224,7 +224,7 @@ void reset6502(uint8_t c816)
 void irq6502(int state)
 {
 #ifdef DEBUG
-  printf("IRQ6505\n");
+  printf("IRQ6505\r\n");
 #endif
 
   if (state) {
@@ -239,7 +239,7 @@ void irq6502(int state)
 void nmi6502()
 {
 #ifdef DEBUG
-  printf("NMI6502\n");
+  printf("NMI6502\r\n");
 #endif
 
   // Perform 6502 reset
@@ -261,7 +261,7 @@ static uint32_t vtmp;
 void tick6502()
 {  
 #ifdef DEBUG
-  printf("Step6502\n");
+  printf("Tick6502\r\n");
 #endif
 
   // Clock cycle start (clock is low)
@@ -336,7 +336,7 @@ void step6502()
   uint8_t ticks=0;
 
   #ifdef DEBUG
-    printf("Step6502\n");
+    printf("Step6502\r\n");
   #endif
 
   tick6502();
@@ -372,7 +372,6 @@ void step6502()
       printf("\r\n");
     #endif
   }
-
 }
 
 void exec6502(uint32_t tickcount)
